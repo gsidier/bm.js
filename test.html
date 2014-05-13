@@ -2,8 +2,57 @@
 <head>
 	<title>bm.js test page</title>
 	<script src="bm.js"></script>
+	<script src="js/jquery.js"></script>
+	<script src="js/jquery.flot.js"></script>
+	
+	<style>
+		div.bmplot {
+			width: 90%;
+			height: 60%;
+			border: 1px solid black;
+		}
+	</style>
+	
 </head>
 <body>
-	nothing here.
+	<div id="bmplot" class="bmplot" ></div>
+	
+	<script>
+		
+		function range(a, b, step) {
+			var res = [];
+			for (var x = a; x < b; x += step) {
+				res.push(x);
+			}
+			return res;
+		}
+		function linspace(a, b, n) {
+			var res = [];
+			for (var k = 0; k < n; k ++) {
+				res.push(a + (b - a) * k / n);
+			}
+			return res;
+		}
+		function zip(x, y) {
+			var res = [];
+			var n = Math.min(x.length, y.length);
+			for (var k = 0; k < n; k ++) {
+				res.push([x[k], y[k]]);
+			}
+			return res;
+		}
+		
+		var dx, xx, yy, data;
+		
+		$(document).ready(function() {
+			
+			dx = 1. / Math.pow(2, 7);
+			xx = range(0, 1, dx);
+			yy = $.map(xx, function(x) { return bmjs.bm(x) });
+			xy = zip(xx, yy);
+			
+			$.plot("#bmplot", [xy]);
+		});
+	</script>
 </body>
 </html>
