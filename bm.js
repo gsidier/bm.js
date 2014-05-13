@@ -71,7 +71,7 @@ var bmjs = bmjs || { };
 	
 	////// Dyadic Reals
 	
-	var R = new FloatMath();
+	var R = bmjs.R = new FloatMath();
 	R.gt = R.gt || function(x, y) { return R.lt(y, x); }
 	R.ge = R.ge || function(x, y) { return ! R.lt(x, y); }
 	R.le = R.le || function(x, y) { return ! R.gt(x, y); }
@@ -107,7 +107,7 @@ var bmjs = bmjs || { };
 	
 	////// RNG
 	
-	var RNG = new bmjs.ShiftRNG(3);
+	var RNG = bmjs.RNG = new bmjs.ShiftRNG(3);
 	
 	//////
 	
@@ -181,7 +181,7 @@ var bmjs = bmjs || { };
 			var c = R.mid(a, b);
 			std = Math.sqrt(R.tofloat(ab) / 2);
 			dW = bmjs.nrand(R.signed(c, s));
-			yc = ya + dW * std;
+			yc = (ya + yb) * .5 + dW * std;
 			
 			if (R.gt(c, x)) {
 				b = c;
