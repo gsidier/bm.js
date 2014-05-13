@@ -159,13 +159,13 @@ var bmjs = bmjs || { };
 		
 		// hunt upwards
 		while (1) {
-			if (x == a) {
+			if (R.eq(x, a)) {
 				return ya;
 			}
 			std = Math.sqrt(R.tofloat(ab));
 			dW = bmjs.nrand(R.signed(b, s));
 			yb = ya + dW * std;
-			if (b > x) break;
+			if (R.gt(b, x)) break;
 			
 			a = b;
 			ya = yb;
@@ -174,8 +174,23 @@ var bmjs = bmjs || { };
 		}
 		
 		// close in
-		while (1) {
+		for (var i = 0; i < 1000; i ++) {
+			if (R.eq(x, a)) {
+				return ya;
+			}
+			var c = R.mid(a, b);
+			std = Math.sqrt(R.tofloat(ab) / 2);
+			dW = bmjs.nrand(R.signed(c, s));
+			yc = ya + dW * std;
 			
+			if (R.gt(c, x)) {
+				b = c;
+				yb = yc;
+			} else {
+				a = c;
+				ya = yc;
+			}
+			ab = R.shift(ab, -1);
 		}
 	}
 	
