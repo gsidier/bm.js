@@ -50,7 +50,7 @@ var bmjs = bmjs || { };
 			while (ip > 1e-10 || fp > 1e-15) {
 				func(ip & 1);
 				ip = ip >> 1;
-				fp = fp << 1;
+				fp = fp * 2;
 				func(Math.floor(fp));
 				fp = fp - Math.floor(fp);
 			}
