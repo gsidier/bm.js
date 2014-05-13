@@ -1,8 +1,7 @@
 
 var bmjs = bmjs || { };
 
-(function() {
-
+(function(bmjs) {
 	// numbers are represented using Arrays of Integers
 	
 	bmjs.dyadic = function(ip, fp) {
@@ -106,5 +105,5 @@ var bmjs = bmjs || { };
 		
 	}
 	
-})();
+})(bmjs);
 
