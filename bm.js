@@ -19,6 +19,18 @@ var bmjs = bmjs || { };
 	
 	function FloatMath() {
 		
+		this.Int = function Int(n) {
+			return n;
+		}
+		
+		this.tofloat = function tofloat(x) {
+			return x;
+		}
+		
+		this.signed = function signed(x, s) {
+			return x * s;
+		}
+		
 		this.shift = function shift(x, n) {
 			return x * Math.pow(2, n);
 		}
@@ -46,6 +58,10 @@ var bmjs = bmjs || { };
 		
 		this.abs = function abs(x) {
 			return Math.abs(x);
+		}
+		
+		this.eq = function eq(x, y) {
+			return x === y;
 		}
 		
 		this.lt = function lt(x, y) {
@@ -97,12 +113,24 @@ var bmjs = bmjs || { };
 	
 	////////
 	
-	bmjs.bm = function bm(x) {
-		var a = 0;
-		var b = 1;
-		var sgn = x >= 0 ? +1 : -1;
-		x = R.abs(x)
+	bmjs.bm = function bm(x, x0) {
+		// x0 is an optional base to prevent numerical overflow.
+		// x0 MUST have same sign as x if nonzero.
+		// x0 MUST be a signed power of 2 if nonzero.
 		
+		var a = R.abs(x0) || R.Int(0);
+		var b = R.eq(a, 0) ? R.Int(1) : R.shift(a, 1);
+		var ab = R.eq(a, 0) ? b : a;
+		var s = x >= 0 ? +1 : -1;
+		x = R.abs(x);
+		var res = 0;
+		
+		var std = Math.sqrt(R.tofloat(ab));
+		var dW = bmjs.nrand(R.signed(b, s));
+		while (b < x) {
+			x += std * dW;
+			
+		}
 	}
 	
 })(bmjs);
