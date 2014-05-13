@@ -76,6 +76,39 @@ var bmjs = bmjs || { };
 	R.ge = R.ge || function(x, y) { return ! R.lt(x, y); }
 	R.le = R.le || function(x, y) { return ! R.gt(x, y); }
 	
+	////// Shift RNG 
+
+	bmjs.ShiftRNG = function ShiftRNG(shift) {
+		
+		var mod = Math.pow(2, 30);
+		
+		shift = Math.abs(shift);
+		if (shift % 2 == 0) { shift ++; }
+		if (shift < 3) { shift = 3; }
+		
+		var cur = 123456789; // arbitrary seed
+		
+		this.random = function random() {
+			cur *= shift
+			cur = cur % mod;
+			return cur / mod;
+		}
+		
+		this.seed = function seed(s) {
+			s = s % mod;
+			s = s ^ 123456789; 
+			if (s == 0) { s = 1; }
+			cur = s;
+			for (var i = 0; i < 30; i ++) {
+				this.random();
+			}
+		}
+	}
+	
+	////// RNG
+	
+	var RNG = new ShiftRNG(3);
+	
 	//////
 	
 	bmjs.rand = function rand(x){
@@ -83,16 +116,12 @@ var bmjs = bmjs || { };
 		
 		var res = 0;
 		R.iterbits(x, function(bit) {
-			var r = Math.random() * Math.pow(2, BITS_PREC);
+			var r = RNG.random() * Math.pow(2, BITS_PREC);
 			if (bit) {
 				res = res ^ r;
 			}
 		});
 		return res * Math.pow(2, - BITS_PREC);
-	}
-	
-	function seed(s) {
-		// XXX TODO 
 	}
 	
 	bmjs.nrand = function nrand(x) {
@@ -103,7 +132,7 @@ var bmjs = bmjs || { };
 		
 		var res = 0;
 		for (var i = 0; i < N_SUM; i ++) {
-			seed(i * 42 + 13);
+			RNG.seed(i * 42 + 13);
 			var u = (rand(x) - .5) * _1_2sqrt3;
 			res += u;
 		}
