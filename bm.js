@@ -152,12 +152,29 @@ var bmjs = bmjs || { };
 		var ab = R.eq(a, 0) ? b : a;
 		var s = x >= 0 ? +1 : -1;
 		x = R.abs(x);
-		var res = 0;
+		var ya = 0;
+		var yb;
+		var dW;
+		var std;
 		
-		var std = Math.sqrt(R.tofloat(ab));
-		var dW = bmjs.nrand(R.signed(b, s));
-		while (b < x) {
-			x += std * dW;
+		// hunt upwards
+		while (1) {
+			if (x == a) {
+				return ya;
+			}
+			std = Math.sqrt(R.tofloat(ab));
+			dW = bmjs.nrand(R.signed(b, s));
+			yb = ya + dW * std;
+			if (b > x) break;
+			
+			a = b;
+			ya = yb;
+			b = R.shift(b, 1);
+			ab = R.shift(ab, 1);
+		}
+		
+		// close in
+		while (1) {
 			
 		}
 	}
