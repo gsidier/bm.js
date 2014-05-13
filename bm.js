@@ -19,27 +19,27 @@ var bmjs = bmjs || { };
 	
 	function FloatMath() {
 		
-		this.Int = function Int(n) {
+		this.Int = function(n) {
 			return n;
 		}
 		
-		this.tofloat = function tofloat(x) {
+		this.tofloat = function(x) {
 			return x;
 		}
 		
-		this.signed = function signed(x, s) {
+		this.signed = function(x, s) {
 			return x * s;
 		}
 		
-		this.shift = function shift(x, n) {
+		this.shift = function(x, n) {
 			return x * Math.pow(2, n);
 		}
 		
-		this.mid = function mid(x, y) {
+		this.mid = function(x, y) {
 			return (x + y) * .5;
 		}
 		
-		this.iterbits = function iterbits(x, func) {
+		this.iterbits = function(x, func) {
 			// iterate over a series of bits that uniquely encodes x
 			// first return the sign
 			if (x >= 0) func(0); else func(1);
@@ -56,15 +56,15 @@ var bmjs = bmjs || { };
 			}
 		}
 		
-		this.abs = function abs(x) {
+		this.abs = function(x) {
 			return Math.abs(x);
 		}
 		
-		this.eq = function eq(x, y) {
+		this.eq = function(x, y) {
 			return x === y;
 		}
 		
-		this.lt = function lt(x, y) {
+		this.lt = function(x, y) {
 			return x < y;
 		}
 	};
@@ -78,7 +78,7 @@ var bmjs = bmjs || { };
 	
 	////// Shift RNG 
 
-	bmjs.ShiftRNG = function ShiftRNG(shift) {
+	bmjs.ShiftRNG = function(shift) {
 		
 		var mod = Math.pow(2, 30);
 		
@@ -88,13 +88,13 @@ var bmjs = bmjs || { };
 		
 		var cur = 123456789; // arbitrary seed
 		
-		this.random = function random() {
+		this.random = function() {
 			cur *= shift
 			cur = cur % mod;
 			return cur / mod;
 		}
 		
-		this.seed = function seed(s) {
+		this.seed = function(s) {
 			s = s % mod;
 			s = s ^ 123456789; 
 			if (s == 0) { s = 1; }
@@ -107,11 +107,11 @@ var bmjs = bmjs || { };
 	
 	////// RNG
 	
-	var RNG = new ShiftRNG(3);
+	var RNG = new bmjs.ShiftRNG(3);
 	
 	//////
 	
-	bmjs.rand = function rand(x){
+	bmjs.rand = function(x){
 		var BITS_PREC = 30;
 		
 		var res = 0;
@@ -124,7 +124,7 @@ var bmjs = bmjs || { };
 		return res * Math.pow(2, - BITS_PREC);
 	}
 	
-	bmjs.nrand = function nrand(x) {
+	bmjs.nrand = function(x) {
 		var N_SUM = 6;
 		// var U = Int[-1/2, 1/2] x**2 dx = [ x**3/3 ][-1/2, 1/2] = 1/12
 		// std U = 1/2sqrt3
@@ -133,7 +133,7 @@ var bmjs = bmjs || { };
 		var res = 0;
 		for (var i = 0; i < N_SUM; i ++) {
 			RNG.seed(i * 42 + 13);
-			var u = (rand(x) - .5) * _1_2sqrt3;
+			var u = (bmjs.rand(x) - .5) * _1_2sqrt3;
 			res += u;
 		}
 		res *= Math.sqrt(N_SUM);
@@ -142,7 +142,7 @@ var bmjs = bmjs || { };
 	
 	////////
 	
-	bmjs.bm = function bm(x, x0) {
+	bmjs.bm = function(x, x0) {
 		// x0 is an optional base to prevent numerical overflow.
 		// x0 MUST have same sign as x if nonzero.
 		// x0 MUST be a signed power of 2 if nonzero.
