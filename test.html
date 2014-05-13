@@ -4,6 +4,7 @@
 	<script src="bm.js"></script>
 	<script src="js/jquery.js"></script>
 	<script src="js/jquery.flot.js"></script>
+	<script src="js/jquery.flot.selection.js"></script>
 	
 	<style>
 		div.bmplot {
@@ -62,14 +63,37 @@
 		
 		var dx, xx, yy, data;
 		
-		$(document).ready(function() {
-			
-			dx = 1. / Math.pow(2, 10);
-			xx = range(0, 1, dx);
+		function plot(xx) {
 			yy = map(xx, function(x) { return bmjs.bm(x) });
 			xy = zip(xx, yy);
+			var options = {
+				selection: {
+					mode: 'x'
+				}
+			};
 			
-			$.plot("#bmplot", [xy]);
+			$.plot("#bmplot", [xy], options);
+		}
+		
+		$(document).ready(function() {
+			
+			var N = 1024; // should be power of 2
+			
+			dx = 1. / N;
+			xx = range(0, 1, dx);
+			plot(xx);
+			
+			$("#bmplot").bind("plotselected", function(evt, ranges) {
+				var x1 = ranges.xaxis.from;
+				var x2 = ranges.xaxis.to;
+				var dx = (x2 - x1) / N;
+				var log2dx = Math.floor(Math.log(dx) / Math.log(2));
+				dx = Math.pow(2, log2dx);
+				x1 = Math.floor(x1 / dx) * dx;
+				x2 = Math.ceil(x2 / dx) * dx;
+				xx = range(x1, x2, dx);
+				plot(xx);
+			});
 		});
 	</script>
 </body>
