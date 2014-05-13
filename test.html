@@ -20,9 +20,17 @@
 	<script>
 		
 		function range(a, b, step) {
+			step = step || 1;
 			var res = [];
 			for (var x = a; x < b; x += step) {
 				res.push(x);
+			}
+			return res;
+		}
+		function map(x, func) {
+			var res = [];
+			for (var i = 0; i < x.length; i ++) {
+				res.push(func(x[i], i));
 			}
 			return res;
 		}
@@ -41,14 +49,24 @@
 			}
 			return res;
 		}
+		function sum(x) {
+			var res = 0;
+			for (var i = 0; i < x.length; i ++) {
+				res += x[i];
+			}
+			return res;
+		}
+		function mean(x) {
+			return sum(x) / x.length; 
+		}
 		
 		var dx, xx, yy, data;
 		
 		$(document).ready(function() {
 			
-			dx = 1. / Math.pow(2, 7);
+			dx = 1. / Math.pow(2, 10);
 			xx = range(0, 1, dx);
-			yy = $.map(xx, function(x) { return bmjs.bm(x) });
+			yy = map(xx, function(x) { return bmjs.bm(x) });
 			xy = zip(xx, yy);
 			
 			$.plot("#bmplot", [xy]);
