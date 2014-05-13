@@ -31,7 +31,7 @@ var bmjs = bmjs || { };
 		this.iterbits = function iterbits(x, func) {
 			// iterate over a series of bits that uniquely encodes x
 			// first return the sign
-			if (x >= 0) func(0) else func(1);
+			if (x >= 0) func(0); else func(1);
 			x = Math.abs(x);
 			// next iterate alternatingly between integer part and fractional part bits
 			var ip = Math.floor(x);
@@ -98,7 +98,7 @@ var bmjs = bmjs || { };
 	
 	////////
 	
-	bmjs.bm(x) {
+	bmjs.bm = function bm(x) {
 		var a = 0;
 		var b = 1;
 		var sgn = x >= 0 ? +1 : -1;
