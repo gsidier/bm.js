@@ -12,11 +12,23 @@
 			height: 60%;
 			border: 1px solid black;
 		}
+		table.formatting {
+			border: 0;
+		}
 	</style>
 	
 </head>
 <body>
 	<div id="bmplot" class="bmplot" ></div>
+	<div id="div-controls">
+		<table class="formatting">
+			<tr>
+				<td><button onclick="zoom(2);">+</button></td>
+				<td><button>-</button></td>
+				<td id="td-time-taken"></td>
+			</tr>
+		</table>
+	</div>
 	
 	<script>
 		
@@ -62,36 +74,68 @@
 		}
 		
 		var dx, xx, yy, data;
+		var x0, y0, rx, ry;
+		var N = 1024; // number of points in plot - keep it a power of 2
+		
+		function logtimetaken(dt) {
+			$("#td-time-taken").text("calculated in: " + dt / 1000 + " seconds");
+		}
 		
 		function plot(xx) {
+
+			var t1 = Date.now();
 			yy = map(xx, function(x) { return bmjs.bm(x) });
+			var t2 = Date.now();
+			logtimetaken(t2 - t1);
 			xy = zip(xx, yy);
+			
+			// maintain a smooth aspect ratio
+			rx = xx[xx.length - 1] - xx[0];
+			ry = Math.sqrt(rx);
+			var i0 = Math.round(xx.length / 2);
+			x0 = xx[i0];
+			y0 = yy[i0];
+			
 			var options = {
 				selection: {
 					mode: 'x'
+				},
+				yaxis: {
+					min: y0 - ry,
+					max: y0 + ry
 				}
 			};
 			
 			$.plot("#bmplot", [xy], options);
 		}
 		
+		function zoom(fact) {
+			var d = Math.ceil(xx.length * (1 - 1 / fact) / 2);
+			var xmin = xx[d]
+			var xmax = xx[xx.length - d];
+			updatexx(xmin, xmax);
+			plot(xx);
+		}
+		
+		function updatexx(x1, x2) {
+			var dx = (x2 - x1) / N;
+			var log2dx = Math.floor(Math.log(dx) / Math.log(2));
+			dx = Math.pow(2, log2dx);
+			x1 = Math.floor(x1 / dx) * dx;
+			x2 = Math.ceil(x2 / dx) * dx;
+			xx = range(x1, x2, dx);
+		}
+		
 		$(document).ready(function() {
 			
-			var N = 1024; // should be power of 2
-			
 			dx = 1. / N;
-			xx = range(0, 1, dx);
+			xx = range(- .5, .5, dx);
 			plot(xx);
 			
 			$("#bmplot").bind("plotselected", function(evt, ranges) {
 				var x1 = ranges.xaxis.from;
 				var x2 = ranges.xaxis.to;
-				var dx = (x2 - x1) / N;
-				var log2dx = Math.floor(Math.log(dx) / Math.log(2));
-				dx = Math.pow(2, log2dx);
-				x1 = Math.floor(x1 / dx) * dx;
-				x2 = Math.ceil(x2 / dx) * dx;
-				xx = range(x1, x2, dx);
+				updatexx(x1, x2);
 				plot(xx);
 			});
 		});
