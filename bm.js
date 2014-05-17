@@ -78,18 +78,30 @@ var bmjs = bmjs || { };
 	
 	////// Shift RNG 
 
-	bmjs.ShiftRNG = function(shift) {
-		
+	bmjs.LinConRNG = function(a, c) {
+		/// Linear Congruence Random Number Generator
+		/// 
+		/// X[n+1] = (a X[n] + c) mod m
+		/// 
+		///	Here we set m = 2 ^ 30 (approx 1e9).
+		/// 
+		/// See [Knuth, AOCP Vol. 2] for detailed discussion and 
+		/// the following rule for good choices of a and c:
+		/// 
+		/// 	.1 m < a < .99 m
+		/// 	a mod 8 = 5
+		///		c > 0, c = 1 for instance
+		///		
 		var mod = Math.pow(2, 30);
 		
-		shift = Math.abs(shift);
-		if (shift % 2 == 0) { shift ++; }
-		if (shift < 3) { shift = 3; }
+		a = Math.abs(a);
+		if (a % 2 == 0) { a ++; }
+		if (a < 3) { a = 3; }
 		
 		var cur = 123456789; // arbitrary seed
 		
 		this.random = function() {
-			cur *= shift
+			cur *= a
 			cur = cur % mod;
 			return cur / mod;
 		}
@@ -107,7 +119,7 @@ var bmjs = bmjs || { };
 	
 	////// RNG
 	
-	var RNG = bmjs.RNG = new bmjs.ShiftRNG(3);
+	var RNG = bmjs.RNG = new bmjs.LinConRNG(368405565, 1);
 	
 	//////
 	
